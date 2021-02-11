@@ -1,4 +1,9 @@
-import { WebSocketGateway } from '@nestjs/websockets';
+import { MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 
 @WebSocketGateway()
-export class ChatGateway {}
+export class ChatGateway {
+	@SubscribeMessage('chats')
+	handleChatEvent(@MessageBody() data: string): string {
+		return data + ' hello there';
+	}
+}
