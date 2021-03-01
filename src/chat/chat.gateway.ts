@@ -1,4 +1,5 @@
 import {
+    ConnectedSocket,
     MessageBody,
     OnGatewayConnection,
     OnGatewayDisconnect,
@@ -12,6 +13,7 @@ import {Socket} from 'socket.io';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     allMessages: string[] = [];
+    clients: Map<string, string> = new Map<string, string>();
 
     @WebSocketServer() server;
     @SubscribeMessage('message')
@@ -22,12 +24,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return message + ' Hello';
     }
 
-    public handleConnection(client: Socket, ...args: any[]): any {
-        client.emit('allMessages', this.allMessages);
-        console.log('Client connected: ', client.id);
+    @SubscribeMessage('nickname')
+    handleNicknameEvent(
+        @MessageBody() nickname: string,
+        @ConnectedSocket() client: Socket
+    ): void {
+        this.clients.set(client.id, nickname);
+        console.log('All nicknames: ', this.clients);
+        this.server.emit('clients', Array.from(this.clients.values()));
     }
 
-    public handleDisconnect(client: any): any {
-        console.log('Client disconnected: ', client.id);
+    public handleConnection(client: Socket, ...args: any[]): any {
+        console.log('Client connected: ', client.id);
+        client.emit('allMessages', this.allMessages);
+        this.server.emit('clients', Array.from(this.clients.values()));
+    }
+
+    public handleDisconnect(client: Socket): any {
+        console.log('Client disconnected: ', this.clients);
+        this.clients.delete(client.id);
+        this.server.emit('clients', Array.from(this.clients.values()));
     }
 }
