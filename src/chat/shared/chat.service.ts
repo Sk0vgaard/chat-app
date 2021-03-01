@@ -1,20 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
+import {ChatClient} from './chat-client.model';
 
 @Injectable()
 export class ChatService {
     allMessages: string[] = [];
-    clients: Map<string, string> = new Map<string, string>();
+    clients: ChatClient[] = [];
 
     public addMessage(message: string): void {
-        this.allMessages.push(message)
+        this.allMessages.push(message);
     }
 
     public addClient(clientId: string, nickname: string): void {
-        this.clients.set(clientId, nickname);
+        this.clients.push({
+            id: clientId,
+            nickname: nickname
+        });
     }
 
-    public getClients(): string[] {
-        return Array.from(this.clients.values())
+    public getClients(): ChatClient[] {
+        return this.clients;
     }
 
     public getMessages(): string[] {
@@ -22,6 +26,6 @@ export class ChatService {
     }
 
     public deleteClient(clientId: string): void {
-        this.clients.delete(clientId);
+        this.clients = this.clients.filter((client) => client.id !== clientId);
     }
 }
