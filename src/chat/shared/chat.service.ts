@@ -38,4 +38,12 @@ export class ChatService {
     public deleteClient(clientId: string): void {
         this.clients = this.clients.filter((client) => client.id !== clientId);
     }
+
+    public updateTyping(typing: boolean, clientId: string) {
+        const chatClient = this.clients.find((client) => client.id === clientId);
+        if (chatClient && chatClient.typing !== typing) {
+            chatClient.typing = typing;
+            return chatClient;
+        }
+    }
 }
