@@ -18,7 +18,8 @@ export class ChatService {
         let chatClient = this.clients.find((client) => client.nickname === nickname && client.id === clientId);
         if (chatClient) {
             return chatClient;
-        } else if (this.clients.find((client) => client.nickname === nickname)) {
+        }
+        if (this.clients.find((client) => client.nickname === nickname)) {
             throw new Error('Nickname already used');
         }
         chatClient = { id: clientId, nickname: nickname };

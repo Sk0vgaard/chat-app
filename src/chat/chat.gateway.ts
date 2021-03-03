@@ -38,12 +38,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             const welcome: WelcomeDto = {
                 clients: this.chatService.getClients(),
                 messages: this.chatService.getMessages(),
-                client: chatClient
+                client: chatClient,
             };
             client.emit('welcome', welcome);
             this.server.emit('clients', this.chatService.getClients());
         } catch (e) {
-            client._error(e);
+            client.error(e.message);
         }
     }
 
