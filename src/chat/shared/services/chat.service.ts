@@ -21,7 +21,7 @@ export class ChatService implements IChatService {
             return chatClient;
         }
         if (this.clients.find((client) => client.nickname === nickname)) {
-            throw new Error('Nickname already used');
+            throw new Error(`Nickname "${nickname}" is already taken`);
         }
         chatClient = { id: clientId, nickname: nickname };
         this.clients.push(chatClient);
